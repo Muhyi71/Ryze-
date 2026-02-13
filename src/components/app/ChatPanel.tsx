@@ -135,7 +135,7 @@ export function ChatPanel() {
           Ryze AI Agent
         </h2>
         <p className="text-xs text-gray-500 mt-0.5">
-         
+         3-step pipeline: Planner → Generator → Explainer
         </p>
       </div>
 
