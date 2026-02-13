@@ -8,6 +8,9 @@ import { runAgentPipelineStreaming } from "@/lib/agent/pipeline";
 import { detectPromptInjection, sanitizeInput } from "@/lib/safety/validator";
 import type { GenerateRequest } from "@/types";
 
+// Allow up to 60s for the 3-step AI pipeline on Vercel
+export const maxDuration = 60;
+
 export async function POST(req: NextRequest) {
   try {
     const body = (await req.json()) as GenerateRequest;

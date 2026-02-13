@@ -66,6 +66,7 @@ export function ChatPanel() {
       const decoder = new TextDecoder();
       let buffer = "";
       let finalResult: GenerateResponse["result"] | null = null;
+      let streamError: string | null = null;
 
       while (true) {
         const { done, value } = await reader.read();
@@ -87,7 +88,7 @@ export function ChatPanel() {
             } else if (event.type === "result") {
               finalResult = event.data;
             } else if (event.type === "error") {
-              throw new Error(event.message);
+              streamError = event.message || "Pipeline error";
             }
           } catch {
             // Ignore malformed JSON lines
@@ -95,11 +96,13 @@ export function ChatPanel() {
         }
       }
 
-      if (finalResult) {
+      if (streamError) {
+        throw new Error(streamError);
+      } else if (finalResult) {
         addMessage("assistant", finalResult.explanation);
         applyGeneration(finalResult, msg);
       } else {
-        throw new Error("No result received from pipeline");
+        throw new Error("No result received — the AI pipeline may have timed out. Try a simpler prompt.");
       }
     } catch (err) {
       const errMsg = err instanceof Error ? err.message : "Network error";
